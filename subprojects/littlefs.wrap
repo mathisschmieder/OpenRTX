@@ -1,4 +1,4 @@
 [wrap-git]
 url = https://github.com/littlefs-project/littlefs.git
-revision = head
+revision = 9c7e232086f865cff0bb96fe753deb66431d91fd
 patch_directory = littlefs

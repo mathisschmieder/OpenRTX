@@ -1,8 +1,12 @@
 project('littlefs', 'c')
 
-littlefs_inc = include_directories('.')
+littlefs_inc = include_directories(['.', 'bd'])
 
-littlefs_src = ['lfs.c']
+littlefs_src = ['lfs.c',
+                'lfs_util.c',
+                'bd/lfs_filebd.c',
+                'bd/lfs_rambd.c',
+                'bd/lfs_testbd.c']
 
 littlefs = static_library('littlefs',
                           littlefs_src,
