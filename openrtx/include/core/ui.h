@@ -224,6 +224,16 @@ void ui_init();
 void ui_drawSplashScreen(bool centered);
 
 /**
+ * This function writes the backup screen on the framebuffer.
+ */
+void ui_drawBackupScreen();
+
+/**
+ * This function writes the flash initialization screen on the framebuffer.
+ */
+void ui_drawFlashInitScreen();
+
+/**
  * This function updates the local copy of the radio state
  * the local copy is called last_state
  * and is accessible from all the UI code as extern variable.

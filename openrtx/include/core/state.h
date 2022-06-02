@@ -61,6 +61,7 @@ typedef struct
     uint8_t    rtxStatus;
     bool       rtxShutdown;
 
+    bool       filesystem_ready;
     bool       emergency;
     settings_t settings;
     gps_t      gps_data;

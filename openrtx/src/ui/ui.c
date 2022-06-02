@@ -232,6 +232,8 @@ const color_t color_black = {0, 0, 0, 255};
 const color_t color_grey = {60, 60, 60, 255};
 const color_t color_white = {255, 255, 255, 255};
 const color_t yellow_fab413 = {250, 180, 19, 255};
+const color_t color_red = {255, 0, 0, 255};
+const color_t color_green = {0, 255, 0, 255};
 
 layout_t layout;
 state_t last_state;
@@ -426,6 +428,64 @@ void ui_drawSplashScreen(bool centered)
         splash_origin.y = SCREEN_HEIGHT / 5;
     gfx_print(splash_origin, FONT_SIZE_12PT, TEXT_ALIGN_CENTER, yellow_fab413, "O P N\nR T X");
     #endif
+}
+
+void ui_drawBackupScreen()
+{
+    gfx_clearScreen();
+    point_t text_pos_1 = {0, SCREEN_HEIGHT / 4};
+    point_t text_pos_2 = {0, SCREEN_HEIGHT / 4 + 40};
+    point_t text_pos_3 = {0, SCREEN_HEIGHT / 4 + 80};
+    gfx_print(text_pos_1,
+              FONT_SIZE_8PT,
+              TEXT_ALIGN_CENTER,
+              color_white,
+              "OpenRTX Installation");
+    gfx_print(text_pos_2,
+              FONT_SIZE_8PT,
+              TEXT_ALIGN_CENTER,
+              yellow_fab413,
+              "Backup mode");
+    gfx_print(text_pos_3,
+              FONT_SIZE_8PT,
+              TEXT_ALIGN_CENTER,
+              color_white,
+              "openrtx.org/#/backup");
+}
+
+void ui_drawFlashInitScreen()
+{
+    gfx_clearScreen();
+    point_t text_pos_1 = {0, SCREEN_HEIGHT / 5};
+    point_t text_pos_2 = {0, SCREEN_HEIGHT / 5 + 20};
+    point_t text_pos_3 = {0, SCREEN_HEIGHT / 5 + 40};
+    point_t text_pos_4 = {0, SCREEN_HEIGHT / 5 + 60};
+    point_t text_pos_5 = {0, SCREEN_HEIGHT / 5 + 80};
+    gfx_print(text_pos_1,
+              FONT_SIZE_8PT,
+              TEXT_ALIGN_CENTER,
+              color_white,
+              "Backup completed");
+    gfx_print(text_pos_2,
+              FONT_SIZE_8PT,
+              TEXT_ALIGN_CENTER,
+              color_red,
+              "Press PTT to format");
+    gfx_print(text_pos_3,
+              FONT_SIZE_8PT,
+              TEXT_ALIGN_CENTER,
+              color_red,
+              "SPI flash");
+    gfx_print(text_pos_4,
+              FONT_SIZE_8PT,
+              TEXT_ALIGN_CENTER,
+              color_white,
+              "Turn off to quit");
+    gfx_print(text_pos_5,
+              FONT_SIZE_8PT,
+              TEXT_ALIGN_CENTER,
+              color_white,
+              "openrtx.org/#/backup");
 }
 
 void _ui_drawLowBatteryScreen()
