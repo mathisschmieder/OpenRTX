@@ -1,7 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2022 by Federico Amedeo Izzo IU2NUO,                    *
  *                         Niccolò Izzo IU2KIN                             *
- *                         Frederik Saraci IU2NRO                          *
+ *                         Frederik Saraci IU2NRO                          * 
  *                         Silvano Seva IU2KWO                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -18,15 +18,46 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>   *
  ***************************************************************************/
 
-#include <state.h>
+#ifndef FILESYSTEM_H
+#define FILESYSTEM_H
 
-int lfs_init()
-{
-    return -1;
-    state.filesystem_ready = true;
-}
+#include <stdint.h>
+#include <stdbool.h>
 
-int lfs_format()
-{
-    return -1;
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/**
+ * Interface for filesystem implementation.
+ * This interface handles:
+ * - Filesystem initialization
+ * - Filesystem format
+ * - File operations
+ * - Filesystem de-initialization
+ */
+
+/**
+ * This function handles filesystem initialization.
+ * Called at power-on
+ * @return Error code: 0=success, -1 on error
+ */
+int filesystem_init();
+
+/**
+ * This function handles filesystem format.
+ * @return Error code: 0=success, -1 on error
+ */
+int filesystem_format();
+
+/**
+ * This function handles filesystem de-initialization.
+ * Called at power-down
+ */
+void filesystem_terminate();
+
+#ifdef __cplusplus
 }
+#endif
+
+#endif /* FILESYSTEM_H */

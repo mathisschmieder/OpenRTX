@@ -1,7 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2022 by Federico Amedeo Izzo IU2NUO,                    *
  *                         Niccolò Izzo IU2KIN                             *
- *                         Frederik Saraci IU2NRO                          * 
+ *                         Frederik Saraci IU2NRO                          *
  *                         Silvano Seva IU2KWO                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -18,44 +18,46 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>   *
  ***************************************************************************/
 
-#ifndef LITTLEFS_H
-#define LITTLEFS_H
+#include <filesystem.h>
+#include <state.h>
+#include <lfs.h>
 
-#include <stdint.h>
-#include <stdbool.h>
+// Filesystem used: LittleFS
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+// variables used by the filesystem
+lfs_t lfs;
+lfs_file_t file;
 
-/**
- * Interface for LittleFS implementation.
- * This interface handles:
- * - Filesystem initialization
- * - File operations
- */
+// configuration of the filesystem is provided by this struct
+const struct lfs_config cfg = {
+    // block device operations
+    .read  = user_provided_block_device_read,
+    .prog  = user_provided_block_device_prog,
+    .erase = user_provided_block_device_erase,
+    .sync  = user_provided_block_device_sync,
 
-/**
- * This function handles LittleFS initialization.
- * Called at power-on
- * @return Error code: 0=success, -1 on error
- */
-int lfs_init();
+    // block device configuration
+    .read_size = 16,
+    .prog_size = 16,
+    .block_size = 4096,
+    .block_count = 128,
+    .cache_size = 16,
+    .lookahead_size = 16,
+    .block_cycles = 500,
+};
 
-/**
- * This function handles LittleFS storage format.
- * @return Error code: 0=success, -1 on error
- */
-int lfs_format();
-
-/**
- * This function handles LittleFS de-initialization.
- * Called at power-down
- */
-void lfs_terminate();
-
-#ifdef __cplusplus
+int filesystem_init()
+{
+    // mount the filesystem
+    int err = lfs_mount(&lfs, &cfg);
+    if(err >= 0)
+        state.filesystem_ready = true;
+    else
+        state.filesystem_ready = false;
+    return err;
 }
-#endif
 
-#endif /* LITTLEFS_H */
+int filesystem_format()
+{
+    return -1;
+}
