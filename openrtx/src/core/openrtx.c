@@ -21,10 +21,10 @@
 #include <interfaces/platform.h>
 #include <interfaces/graphics.h>
 #include <interfaces/delays.h>
+#include <interfaces/filesystem.h>
 #include <threads.h>
 #include <openrtx.h>
 #include <ui.h>
-#include <filesystem.h>
 #include <backup.h>
 
 extern void *ui_task(void *arg);
@@ -59,7 +59,7 @@ void _openrtx_backup()
     sleepFor(0u, 30u);
     platform_setBacklightLevel(state.settings.brightness);
     // Wait for backup over serial xmodem
-    //eflash_dump();
+    eflash_dump();
     // Backup completed: Ask user confirmation for flash initialization
     ui_drawFlashInitScreen();
     gfx_render();
@@ -67,7 +67,7 @@ void _openrtx_backup()
     {
         if(platform_getPttStatus() == true)
         {
-            filesystem_format();
+            int err = filesystem_format();
             // Flash init completed: reboot
             NVIC_SystemReset();
             break;

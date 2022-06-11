@@ -35,7 +35,6 @@ openrtx_src = ['openrtx/src/core/state.c',
                'openrtx/src/core/audio_codec.c',
                'openrtx/src/core/data_conversion.c',
                'openrtx/src/core/memory_profiling.cpp',
-               'openrtx/src/core/filesystem.c',
                'openrtx/src/ui/ui.c',
                'openrtx/src/ui/ui_main.c',
                'openrtx/src/ui/ui_mode.c',
@@ -142,6 +141,7 @@ mdx_src = ['openrtx/src/core/xmodem.c',
            'platform/drivers/GPS/GPS_MDx.cpp',
            'platform/drivers/NVM/W25Qx.c',
            'platform/drivers/NVM/nvmem_settings_MDx.c',
+           'platform/drivers/NVM/filesystem_spiFlash.c',
            'platform/drivers/audio/audio_MDx.c',
            'platform/drivers/audio/inputStream_MDx.cpp',
            'platform/drivers/audio/outputStream_MDx.cpp',
@@ -249,6 +249,7 @@ linux_platform_src = ['platform/targets/linux/emulator/emulator.c',
                       'platform/drivers/display/display_libSDL.c',
                       'platform/drivers/keyboard/keyboard_linux.c',
                       'platform/drivers/NVM/nvmem_linux.c',
+                      'platform/drivers/NVM/filesystem_linux.c',
                       'platform/drivers/GPS/GPS_linux.c',
                       'platform/mcu/x86_64/drivers/gpio.c',
                       'platform/mcu/x86_64/drivers/delays.c',
@@ -274,7 +275,7 @@ linux_inc = inc + ['platform/targets/linux',
 if not meson.is_cross_build()
   sdl_dep     = dependency('SDL2')
   threads_dep = dependency('threads')
-  linux_dep   = [sdl_dep, threads_dep, codec2_dep]
+  linux_dep   = [sdl_dep, threads_dep, codec2_dep, littlefs_dep]
 else
   linux_dep = [ ]
 endif
