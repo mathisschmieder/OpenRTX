@@ -1,7 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2022 by Federico Amedeo Izzo IU2NUO,                    *
  *                         Niccolò Izzo IU2KIN                             *
- *                         Frederik Saraci IU2NRO                          * 
+ *                         Frederik Saraci IU2NRO                          *
  *                         Silvano Seva IU2KWO                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -23,6 +23,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <lfs.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -39,20 +40,22 @@ extern "C" {
 
 /**
  * This function handles filesystem initialization.
- * Called at power-on
- * @return Error code: 0=success, -1 on error
+ * To be called at power-on.
+ *
+ * @return Error code: 0 on success, -1 on error
  */
 int filesystem_init();
 
 /**
  * This function handles filesystem format.
- * @return Error code: 0=success, -1 on error
+ *
+ * @return Error code: 0 on success, -1 on error
  */
 int filesystem_format();
 
 /**
  * This function handles filesystem de-initialization.
- * Called at power-down
+ * To be called at power-down.
  */
 void filesystem_terminate();
 

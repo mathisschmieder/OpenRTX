@@ -90,7 +90,7 @@ ssize_t W25Qx_readSecurityRegister(uint32_t addr, void* buf, size_t len)
     }
 
     gpio_clearPin(FLASH_CS);
-    (void) spiFlash_SendRecv(CMD_RSECR);             /* Command        */
+    (void) spiFlash_SendRecv(CMD_RSECR);            /* Command        */
     (void) spiFlash_SendRecv((addr >> 16) & 0xFF);  /* Address high   */
     (void) spiFlash_SendRecv((addr >> 8) & 0xFF);   /* Address middle */
     (void) spiFlash_SendRecv(addr & 0xFF);          /* Address low    */
@@ -195,7 +195,7 @@ bool W25Qx_eraseChip()
     return false;
 }
 
-ssize_t W25Qx_writePage(uint32_t addr, void* buf, size_t len)
+ssize_t W25Qx_writePage(uint32_t addr, const void* buf, size_t len)
 {
     /* Keep 256-byte boundary to avoid wrap-around when writing */
     size_t addrRange = addr & 0x0000FF;
@@ -219,7 +219,7 @@ ssize_t W25Qx_writePage(uint32_t addr, void* buf, size_t len)
 
     for(size_t i = 0; i < writeLen; i++)
     {
-        uint8_t value = ((uint8_t *) buf)[i];
+        uint8_t value = ((const uint8_t *) buf)[i];
         (void) spiFlash_SendRecv(value);
     }
 
@@ -248,7 +248,7 @@ ssize_t W25Qx_writePage(uint32_t addr, void* buf, size_t len)
     return -1;
 }
 
-bool W25Qx_writeData(uint32_t addr, void* buf, size_t len)
+bool W25Qx_writeData(uint32_t addr, const void* buf, size_t len)
 {
     /* Fail if we are trying to write more than 4K bytes */
     if(len > 4096) return false;

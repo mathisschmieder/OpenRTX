@@ -20,7 +20,7 @@
 
 #include <interfaces/filesystem.h>
 #include <state.h>
-#include <lfs.h>
+#include <hwconfig.h>
 #include <W25Qx.h>
 
 // Filesystem used: LittleFS
@@ -37,18 +37,19 @@
 #endif
 
 // variables used by the filesystem
-lfs_t lfs;
-lfs_file_t file;
+static lfs_t lfs;
 
-int lfs_W25Qx_read(const struct lfs_config *cfg, lfs_block_t block,
-        lfs_off_t off, void *buffer, lfs_size_t size);
-int lfs_W25Qx_prog(const struct lfs_config *cfg, lfs_block_t block,
-        lfs_off_t off, const void *buffer, lfs_size_t size);
-int lfs_W25Qx_erase(const struct lfs_config *cfg, lfs_block_t block);
-int lfs_W25Qx_sync(const struct lfs_config *cfg);
+// block device API
+static int lfs_W25Qx_read(const struct lfs_config *cfg, lfs_block_t block,
+                          lfs_off_t off, void *buffer, lfs_size_t size);
+static int lfs_W25Qx_prog(const struct lfs_config *cfg, lfs_block_t block,
+                          lfs_off_t off, const void *buffer, lfs_size_t size);
+static int lfs_W25Qx_erase(const struct lfs_config *cfg, lfs_block_t block);
+static int lfs_W25Qx_sync(const struct lfs_config *cfg);
 
-// configuration of the filesystem is provided by this struct
-const struct lfs_config cfg = {
+// Filesystem configuration data
+const struct lfs_config cfg =
+{
     // block device operations
     .read  = lfs_W25Qx_read,
     .prog  = lfs_W25Qx_prog,
@@ -56,17 +57,19 @@ const struct lfs_config cfg = {
     .sync  = lfs_W25Qx_sync,
 
     // block device configuration
-    .read_size = LFS_READ_SIZE,
-    .prog_size = LFS_PROG_SIZE,
-    .block_size = LFS_BLOCK_SIZE,
-    .block_count = LFS_BLOCK_COUNT,
-    .block_cycles = LFS_BLOCK_CYCLES,
-    .cache_size = LFS_CACHE_SIZE,
+    .read_size      = LFS_READ_SIZE,
+    .prog_size      = LFS_PROG_SIZE,
+    .block_size     = LFS_BLOCK_SIZE,
+    .block_count    = LFS_BLOCK_COUNT,
+    .block_cycles   = LFS_BLOCK_CYCLES,
+    .cache_size     = LFS_CACHE_SIZE,
     .lookahead_size = LFS_LOOKAHEAD_SIZE,
 };
 
 int filesystem_init()
 {
+    W25Qx_init();
+
     int err = lfs_mount(&lfs, &cfg);
     if(err >= 0)
         state.filesystem_ready = true;
@@ -77,8 +80,7 @@ int filesystem_init()
 
 int filesystem_format()
 {
-    int err = lfs_format(&lfs, &cfg);
-    return err;
+    return lfs_format(&lfs, &cfg);
 }
 
 void filesystem_terminate()
@@ -86,11 +88,12 @@ void filesystem_terminate()
     lfs_unmount(&lfs);
 }
 
-/// block device API ///
-int lfs_W25Qx_read(const struct lfs_config *cfg, lfs_block_t block,
-        lfs_off_t off, void *buffer, lfs_size_t size) {
 
-    // check if read is valid
+/// Implementation of block device API ///
+int lfs_W25Qx_read(const struct lfs_config *cfg, lfs_block_t block,
+                   lfs_off_t off, void *buffer, lfs_size_t size)
+{
+    // check if data is valid
     LFS_ASSERT(off  % cfg->read_size == 0);
     LFS_ASSERT(size % cfg->read_size == 0);
     LFS_ASSERT(block < cfg->block_count);
@@ -99,13 +102,15 @@ int lfs_W25Qx_read(const struct lfs_config *cfg, lfs_block_t block,
     uint32_t addr = (block * cfg->block_size) + off;
     W25Qx_wakeup();
     W25Qx_readData(addr, buffer, size);
+
     return 0;
 }
 
 int lfs_W25Qx_prog(const struct lfs_config *cfg, lfs_block_t block,
-        lfs_off_t off, const void *buffer, lfs_size_t size) {
+                   lfs_off_t off, const void *buffer, lfs_size_t size)
+{
 
-    // check if write is valid
+    // check if data is valid
     LFS_ASSERT(off  % cfg->prog_size == 0);
     LFS_ASSERT(size % cfg->prog_size == 0);
     LFS_ASSERT(block < cfg->block_count);
@@ -114,24 +119,26 @@ int lfs_W25Qx_prog(const struct lfs_config *cfg, lfs_block_t block,
     uint32_t addr = (block * cfg->block_size) + off;
     W25Qx_wakeup();
     W25Qx_writePage(addr, buffer, size);
+
     return 0;
 }
 
-int lfs_W25Qx_erase(const struct lfs_config *cfg, lfs_block_t block) {
-
-    // check if erase is valid
+int lfs_W25Qx_erase(const struct lfs_config *cfg, lfs_block_t block)
+{
+    // check if data is valid
     LFS_ASSERT(block < cfg->block_count);
 
     // erase
     uint32_t addr = (block * cfg->block_size);
     W25Qx_wakeup();
     bool success = W25Qx_eraseSector(addr);
-    int err = (success ? 0 : -1);
-    return err;
+
+    return success ? 0 : 1;
 }
 
-int lfs_W25Qx_sync(const struct lfs_config *cfg) {
+int lfs_W25Qx_sync(const struct lfs_config *cfg)
+{
     // W25Qx does not have a cache, thus it does not need syncing
+    (void) cfg;
     return 0;
 }
-

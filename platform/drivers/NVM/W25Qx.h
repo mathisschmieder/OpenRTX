@@ -104,7 +104,7 @@ bool W25Qx_eraseChip();
  * @param len: number of bytes to written.
  * @return: -1 on error, the number of bytes effectively written otherwise.
  */
-ssize_t W25Qx_writePage(uint32_t addr, void *buf, size_t len);
+ssize_t W25Qx_writePage(uint32_t addr, const void *buf, size_t len);
 
 /**
  * Write data to flash memory.
@@ -119,6 +119,6 @@ ssize_t W25Qx_writePage(uint32_t addr, void *buf, size_t len);
  * @param buf: pointer to a buffer where data is written to.
  * @param len: number of bytes to read.
  */
-bool W25Qx_writeData(uint32_t addr, void *buf, size_t len);
+bool W25Qx_writeData(uint32_t addr, const void *buf, size_t len);
 
 #endif /* W25Qx_H */
