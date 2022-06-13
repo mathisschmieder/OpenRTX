@@ -45,6 +45,9 @@ extern "C" {
 /* Battery type */
 #define BAT_LIPO_2S
 
+/* Internal flash type */
+#define FLASH_W25Q128FV
+
 /* Power keep switch */
 #define PWR_SW GPIOA,7
 
