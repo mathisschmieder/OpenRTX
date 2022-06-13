@@ -19,7 +19,6 @@
  ***************************************************************************/
 
 #include <interfaces/filesystem.h>
-#include <state.h>
 #include <hwconfig.h>
 #include <W25Qx.h>
 
@@ -70,12 +69,7 @@ int filesystem_init()
 {
     W25Qx_init();
 
-    int err = lfs_mount(&lfs, &cfg);
-    if(err >= 0)
-        state.filesystem_ready = true;
-    else
-        state.filesystem_ready = false;
-    return err;
+    return lfs_mount(&lfs, &cfg);
 }
 
 int filesystem_format()

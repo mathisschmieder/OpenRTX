@@ -29,29 +29,8 @@
 
 extern void *ui_task(void *arg);
 
-void openrtx_init()
-{
-    // Initialize platform drivers
-    platform_init();
-
-    // Initialize radio state
-    state_init();
-
-    // Initialize display and graphics driver
-    gfx_init();
-
-    // Set default contrast
-    display_setContrast(state.settings.contrast);
-
-    // Initialize filesystem
-    filesystem_init(); 
-
-    // Initialize user interface
-    ui_init();
-}
-
 #if !defined(PLATFORM_LINUX) && !defined(PLATFORM_MOD17)
-void _openrtx_backup()
+static void _openrtx_backup()
 {
     ui_drawBackupScreen();
     gfx_render();
@@ -84,6 +63,29 @@ void _openrtx_backup()
 }
 #endif
 
+void openrtx_init()
+{
+    // Initialize platform drivers
+    platform_init();
+
+    // Initialize radio state
+    state_init();
+
+    // Initialize display and graphics driver
+    gfx_init();
+
+    // Set default contrast
+    display_setContrast(state.settings.contrast);
+
+    // Initialize filesystem
+    int status = filesystem_init();
+    if(status == 0)
+        state.filesystem_ready = true;
+
+    // Initialize user interface
+    ui_init();
+}
+
 void *openrtx_run()
 {
 #if !defined(PLATFORM_LINUX) && !defined(PLATFORM_MOD17)
@@ -91,7 +93,7 @@ void *openrtx_run()
     if(state.filesystem_ready == false)
         _openrtx_backup();
 #endif
-    
+
     // Display splash screen
     ui_drawSplashScreen(true);
     gfx_render();
