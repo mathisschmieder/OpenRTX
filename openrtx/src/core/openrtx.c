@@ -29,7 +29,9 @@
 
 extern void *ui_task(void *arg);
 
-#if !defined(PLATFORM_LINUX) && !defined(PLATFORM_MOD17)
+#if defined(ENABLE_FILESYSTEM) && \
+   !defined(PLATFORM_LINUX)    && \
+   !defined(PLATFORM_MOD17)
 static void _openrtx_backup()
 {
     ui_drawBackupScreen();
@@ -46,7 +48,7 @@ static void _openrtx_backup()
     {
         if(platform_getPttStatus() == true)
         {
-            int err = filesystem_format();
+            filesystem_format();
             // Flash init completed: reboot
             NVIC_SystemReset();
             break;
@@ -77,10 +79,12 @@ void openrtx_init()
     // Set default contrast
     display_setContrast(state.settings.contrast);
 
+    #ifdef ENABLE_FILESYSTEM
     // Initialize filesystem
     int status = filesystem_init();
     if(status == 0)
         state.filesystem_ready = true;
+    #endif
 
     // Initialize user interface
     ui_init();
@@ -88,11 +92,13 @@ void openrtx_init()
 
 void *openrtx_run()
 {
-#if !defined(PLATFORM_LINUX) && !defined(PLATFORM_MOD17)
+    #if defined(ENABLE_FILESYSTEM) && \
+       !defined(PLATFORM_LINUX)    && \
+       !defined(PLATFORM_MOD17)
     // If filesystem initialization failed, enter backup mode (sink state)
     if(state.filesystem_ready == false)
         _openrtx_backup();
-#endif
+    #endif
 
     // Display splash screen
     ui_drawSplashScreen(true);

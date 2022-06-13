@@ -12,6 +12,12 @@ project('OpenRTX', ['c', 'cpp'],
 def = {}
 
 ##
+## System-wide settings and configurations
+##
+
+#def += {'ENABLE_FILESYSTEM':''}
+
+##
 ## ----------------- Platform-independent source files -------------------------
 ##
 
