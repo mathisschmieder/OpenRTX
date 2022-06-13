@@ -59,6 +59,14 @@ int filesystem_format();
  */
 void filesystem_terminate();
 
+/**
+ * Return an handle to the filesystem data structure.
+ *
+ * @return a pointer to the filesystem data structure or NULL if filesystem is
+ * not initialised.
+ */
+lfs_t *filesystem_getHandle();
+
 #ifdef __cplusplus
 }
 #endif
